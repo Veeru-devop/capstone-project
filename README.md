@@ -77,16 +77,31 @@ ENTRYPOINT  apachectl -D FOREGROUND
 Jenkins Execute shell commands:
 ===============================================
 
-sudo  docker build . -t finalrelease
-sudo docker run -itd -p 80:80 finalrelease
-
+CONTAINERS=$(sudo docker ps -a -q)
+if [ -n "$CONTAINERS" ]; then
+  sudo docker rm -f $CONTAINERS
+else
+  echo "No containers to remove."
+fi
+sudo docker buildx create --use
+sudo docker buildx build --load -t newimage2 .
+sudo docker buildx build --push -t docker.io/veeruawsdevop/newimage2 .
+sudo docker buildx build --load -t newimage2 .
+sudo docker run -itd -p 80:80 newimage2
 ===============================================
 Running for second time:
 ===============================================
-sudo docker rm -f $(sudo docker ps -a -q)
-sudo  docker build . -t finalrelease
-sudo docker run -itd -p 80:80 finalrelease
-
+CONTAINERS=$(sudo docker ps -a -q)
+if [ -n "$CONTAINERS" ]; then
+  sudo docker rm -f $CONTAINERS
+else
+  echo "No containers to remove."
+fi
+sudo docker buildx create --use
+sudo docker buildx build --load -t newimage2 .
+sudo docker buildx build --push -t docker.io/veeruawsdevop/newimage2 .
+sudo docker buildx build --load -t newimage2 .
+sudo docker run -itd -p 80:80 newimage2
 
 
 
